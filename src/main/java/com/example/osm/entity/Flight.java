@@ -1,6 +1,5 @@
 package com.example.osm.entity;
 
-import com.example.osm.Airplane;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,7 +1,5 @@
-package com.example.osm;
+package com.example.osm.entity;
 
-import com.example.osm.entity.AirplaneStatus;
-import com.example.osm.entity.Flight;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +27,6 @@ public class Airplane {
     private Set<Flight> flights = new LinkedHashSet<>();
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", columnDefinition = "airplane_status", nullable = false)
+    @Column(columnDefinition = "airplane_status", nullable = false)
     private AirplaneStatus status;
 }
