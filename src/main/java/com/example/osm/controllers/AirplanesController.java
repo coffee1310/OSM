@@ -38,7 +38,7 @@ public class AirplanesController {
     public ResponseEntity<?> putPlane(@PathVariable Long id, @RequestBody Airplane plane_details) {
         try {
             Airplane plane = airplaneRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFound(String.format("Airplane with id: %d not found", id)));
+                    .orElseThrow(() -> new ResourceNotFound(String.format("Airplane with id: %d was not found", id)));
             plane.setModel(plane_details.getModel());
             plane.setNumber(plane_details.getNumber());
             plane.setStatus(plane_details.getStatus());
