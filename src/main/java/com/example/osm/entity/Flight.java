@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -36,6 +38,9 @@ public class Flight {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "airplane_id", nullable = false)
     private Airplane airplane;
+
+    @OneToMany(mappedBy = "flight")
+    private Set<Ticket> tickets = new LinkedHashSet<>();
 
     @Transient
     private Long airplaneId;

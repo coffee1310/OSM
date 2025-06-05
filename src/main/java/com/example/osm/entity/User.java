@@ -1,11 +1,11 @@
 package com.example.osm.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -14,6 +14,7 @@ import lombok.Setter;
 public class User {
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "\"FullName\"", nullable = false)
@@ -22,4 +23,6 @@ public class User {
     @Column(name = "\"Age\"", nullable = false)
     private Short age;
 
+    @OneToMany(mappedBy = "user")
+    Set<Ticket> tickets = new LinkedHashSet<>();
 }

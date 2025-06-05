@@ -62,7 +62,7 @@ public class FlightsController {
             Flight flight = flightService.findById(id).orElseThrow(() -> new ResourceNotFound(String.format("Flight with id: %d was not found", id)));
 
             flightService.delete(flight);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("Flight was deleted", HttpStatus.OK);
         } catch (ResourceNotFound e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

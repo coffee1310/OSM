@@ -1,9 +1,6 @@
 package com.example.osm.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,12 +11,20 @@ import lombok.Setter;
 public class Ticket {
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "\"Flight_id\"", nullable = false)
+    private Flight flight;
+
+    @Transient
     private Long userId;
 
-    @Column(name = "\"Flight_id\"", nullable = false)
+    @Transient
     private Long flightId;
-
 }
