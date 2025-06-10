@@ -21,7 +21,7 @@ public class FlightService {
     private AirplaneRepository airplaneRepository;
 
     // Функция для добавления полета, добавляя автоматически самолет
-    public Flight createFlight(Flight flight) throws ResourceNotFound{
+    public FlightDTO createFlight(Flight flight) throws ResourceNotFound{
         Long planeId = flight.getAirplaneId();
         Airplane plane = airplaneRepository.findById(planeId)
                 .orElseThrow(() ->
@@ -29,7 +29,10 @@ public class FlightService {
 
         flight.setAirplane(plane);
         flightRepository.save(flight);
-        return flight;
+        FlightDTO flightDTO = convertToFlightDTO(flight);
+        flightDTO.validate();
+
+        return flightDTO;
     }
 
     // Функция для конвертирования из Flight в FlightDTO для избежания рекурсии
@@ -50,6 +53,21 @@ public class FlightService {
             flightDTO.setAirplane(airplaneDTO);
         }
 
+        flightDTO.validate();
+        return flightDTO;
+    }
+
+    public FlightDTO putFlight(Flight flight, Flight flightDetails) {
+        flight.setStartPlace(flightDetails.getStartPlace());
+        flight.setEndPlace(flightDetails.getEndPlace());
+        flight.setStartTime(flightDetails.getStartTime());
+        flight.setEndTime(flightDetails.getEndTime());
+        flightRepository.save(flight);
+
+        FlightDTO flightDTO;
+        flightDTO = convertToFlightDTO(flight);
+
+        flightDTO.validate();
         return flightDTO;
     }
 

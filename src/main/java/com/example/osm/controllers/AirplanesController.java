@@ -1,8 +1,10 @@
 package com.example.osm.controllers;
 
 import com.example.osm.entity.Airplane;
+import com.example.osm.entity.DTO.AirplaneDTO;
 import com.example.osm.exception.ResourceNotFound;
 import com.example.osm.repository.AirplaneRepository;
+import com.example.osm.service.AirplaneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -16,18 +18,18 @@ import java.util.Optional;
 public class AirplanesController {
 
     @Autowired
-    private AirplaneRepository airplaneRepository;
+    private AirplaneService airplaneService;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPlane(@PathVariable Long id) {
-        Optional<Airplane> plane = airplaneRepository.findById(id);
+        Optional<Airplane> plane = airplaneService.findById(id);
         return plane.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<?> addPlane(@RequestBody Airplane plane) {
         try {
-            Airplane new_plane = airplaneRepository.save(plane);
+            AirplaneDTO new_plane = airplaneService.createAirplane(plane);
             return new ResponseEntity<>(new_plane, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
@@ -37,16 +39,11 @@ public class AirplanesController {
     @PutMapping("/{id}")
     public ResponseEntity<?> putPlane(@PathVariable Long id, @RequestBody Airplane plane_details) {
         try {
-            Airplane plane = airplaneRepository.findById(id)
+            Airplane plane = airplaneService.findById(id)
                     .orElseThrow(() -> new ResourceNotFound(String.format("Airplane with id: %d was not found", id)));
-            plane.setModel(plane_details.getModel());
-            plane.setNumber(plane_details.getNumber());
-            plane.setStatus(plane_details.getStatus());
-            plane.setFlights(plane_details.getFlights());
+            AirplaneDTO airplaneDTO = airplaneService.updateAirplane(plane, plane_details);
 
-            plane = airplaneRepository.save(plane);
-
-            return new ResponseEntity<>(plane, HttpStatus.OK);
+            return new ResponseEntity<>(airplaneDTO, HttpStatus.OK);
         } catch (ResourceNotFound e) {
             return new ResponseEntity<>(e.toString(), HttpStatus.NOT_FOUND);
         }
@@ -55,9 +52,9 @@ public class AirplanesController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delPlane(@PathVariable Long id) {
         try {
-            Airplane plane = airplaneRepository.findById(id)
+            Airplane plane = airplaneService.findById(id)
                     .orElseThrow(() -> new ResourceNotFound(String.format("Airplane with id: %d not found", id)));
-            airplaneRepository.delete(plane);
+            airplaneService.delete(plane);
 
             return new ResponseEntity<>("Airplane was deleted", HttpStatus.OK);
         } catch (ResourceNotFound e) {

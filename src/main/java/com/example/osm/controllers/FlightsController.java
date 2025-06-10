@@ -29,8 +29,8 @@ public class FlightsController {
     @PostMapping
     public ResponseEntity<?> addFlight(@RequestBody Flight flight) {
         try {
-            flight = flightService.createFlight(flight);
-            return new ResponseEntity<>(flight, HttpStatus.CREATED);
+            FlightDTO flightDTO = flightService.createFlight(flight);
+            return new ResponseEntity<>(flightDTO, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -41,15 +41,7 @@ public class FlightsController {
         try {
             Flight flight = flightService.findById(id).orElseThrow(() -> new ResourceNotFound(String.format("Flight with id: %d was not found", id)));
 
-            flight.setAirplane(flightDetails.getAirplane());
-            flight.setStartTime(flightDetails.getStartTime());
-            flight.setEndTime(flightDetails.getEndTime());
-            flight.setStartPlace(flightDetails.getStartPlace());
-            flight.setEndPlace(flightDetails.getEndPlace());
-            flight.setAirplaneId(flightDetails.getAirplaneId());
-
-            flight = flightService.save(flight);
-            FlightDTO flightDTO = flightService.convertToFlightDTO(flight);
+            FlightDTO flightDTO = flightService.putFlight(flight, flightDetails);
             return new ResponseEntity<>(flightDTO, HttpStatus.OK);
         } catch (ResourceNotFound e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

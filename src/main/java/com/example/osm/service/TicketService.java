@@ -41,10 +41,11 @@ public class TicketService {
         ticketRepository.save(ticket);
 
         TicketDTO ticketDTO = convertToTicketDTO(ticket);
+        ticketDTO.validate();
         return ticketDTO;
     }
 
-    public Ticket updateTicket(Ticket ticket, Ticket ticketDetails) throws ResourceNotFound{
+    public TicketDTO updateTicket(Ticket ticket, Ticket ticketDetails) throws ResourceNotFound{
         Long user_id = ticketDetails.getUserId();
         Long flight_id = ticketDetails.getFlightId();
 
@@ -56,7 +57,9 @@ public class TicketService {
         ticket.setFlight(flight);
         ticketRepository.save(ticket);
 
-        return ticket;
+        TicketDTO ticketDTO = convertToTicketDTO(ticket);
+        ticketDTO.validate();
+        return ticketDTO;
     }
 
     public void deleteTicket(Ticket ticket) {
@@ -74,6 +77,8 @@ public class TicketService {
         ticketDTO.setId(ticket.getId());
         ticketDTO.setFlight(flightDTO);
         ticketDTO.setUser(userDTO);
+        ticketDTO.validate();
+
         return ticketDTO;
     }
 }

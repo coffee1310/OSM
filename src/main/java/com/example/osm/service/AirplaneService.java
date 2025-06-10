@@ -21,13 +21,20 @@ public class AirplaneService {
         return airplaneRepository.findById(id);
     }
 
+
+    public AirplaneDTO getById(Long id) {
+        return convertToAirplaneDTO(airplaneRepository.findById(id).get());
+    }
+
     public AirplaneDTO createAirplane(Airplane airplane) {
+        airplane = airplaneRepository.save(airplane);
+
         AirplaneDTO airplaneDTO = new AirplaneDTO();
         airplaneDTO.setId(airplane.getId());
         airplaneDTO.setModel(airplane.getModel());
         airplaneDTO.setNumber(airplane.getNumber());
+        airplaneDTO.validate();
 
-        airplaneRepository.save(airplane);
         return airplaneDTO;
     }
 
@@ -39,18 +46,29 @@ public class AirplaneService {
         airplaneRepository.save(airplane);
 
         AirplaneDTO airplaneDTO = new AirplaneDTO();
-        airplaneDTO.setId(airplaneDetails.getId());
+        airplaneDTO.setId(airplane.getId());
         airplaneDTO.setModel(airplaneDetails.getModel());
         airplaneDTO.setNumber(airplaneDetails.getNumber());
+        airplaneDTO.validate();
+
         return airplaneDTO;
+    }
+
+    public Airplane save(Airplane airplane) {
+        return airplaneRepository.save(airplane);
+    }
+
+    public void delete(Airplane airplane) {
+        airplaneRepository.delete(airplane);
     }
 
     public AirplaneDTO convertToAirplaneDTO(Airplane airplane) {
         AirplaneDTO airplaneDTO = new AirplaneDTO();
         airplaneDTO.setId(airplane.getId());
         airplaneDTO.setNumber(airplane.getNumber());
-        airplane.setModel(airplaneDTO.getModel());
-        airplane.setStatus(airplane.getStatus());
+        airplaneDTO.setModel(airplane.getModel());
+        airplaneDTO.setStatus(airplane.getStatus());
+        airplaneDTO.validate();
 
         return airplaneDTO;
     }

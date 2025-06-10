@@ -45,8 +45,8 @@ public class TicketController {
             Ticket ticket = ticketService.findById(id)
                     .orElseThrow(() ->
                     new ResourceNotFound(String.format("Ticket with id: %d was not found", id)));
-            Ticket new_ticket = ticketService.updateTicket(ticket, ticketDetails);
-            return new ResponseEntity<>(ticketService.convertToTicketDTO(new_ticket), HttpStatus.OK);
+            TicketDTO new_ticket = ticketService.updateTicket(ticket, ticketDetails);
+            return new ResponseEntity<>(new_ticket, HttpStatus.OK);
         } catch (ResourceNotFound e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
