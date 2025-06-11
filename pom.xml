@@ -80,6 +80,9 @@
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
                 <version>2.12.0</version>
+                <configuration>
+                    <reportDirectory>target/allure-results</reportDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>
