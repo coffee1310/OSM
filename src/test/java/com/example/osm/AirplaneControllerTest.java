@@ -24,6 +24,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import io.qameta.allure.*;
+
+@Epic("Тесты REST контроллера самолетов")
 @WebMvcTest(AirplanesController.class)
 class AirplaneControllerTest {
 
