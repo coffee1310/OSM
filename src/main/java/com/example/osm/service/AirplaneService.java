@@ -27,13 +27,13 @@ public class AirplaneService {
     }
 
     public AirplaneDTO createAirplane(Airplane airplane) {
-        airplane = airplaneRepository.save(airplane);
-
         AirplaneDTO airplaneDTO = new AirplaneDTO();
         airplaneDTO.setId(airplane.getId());
         airplaneDTO.setModel(airplane.getModel());
         airplaneDTO.setNumber(airplane.getNumber());
         airplaneDTO.validate();
+
+        airplaneRepository.save(airplane);
 
         return airplaneDTO;
     }

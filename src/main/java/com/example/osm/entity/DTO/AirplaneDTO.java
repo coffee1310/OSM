@@ -2,6 +2,7 @@ package com.example.osm.entity.DTO;
 
 import com.example.osm.entity.AirplaneStatus;
 import jakarta.validation.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -13,13 +14,17 @@ public class AirplaneDTO {
     private Long id;
 
     @NotNull
+    @NotBlank
     @Size(min = 5, max = 30)
     private String model;
 
     @NotNull
+    @NotBlank
     @Size(min = 5, max = 7)
     private String number;
 
+    @NotBlank
+    @NotNull
     AirplaneStatus status;
 
     public void validate() {
