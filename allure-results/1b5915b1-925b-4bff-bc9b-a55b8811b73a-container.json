@@ -1,0 +1,1 @@
+{"uuid":"1b5915b1-925b-4bff-bc9b-a55b8811b73a","name":"DELETE /api/airplanes/{id} -> 201 OK, когда самолет существует","children":["01e83dfd-4f51-4513-88a5-04b737ef3f47"],"befores":[],"afters":[],"start":1751059935469,"stop":1751059935478}

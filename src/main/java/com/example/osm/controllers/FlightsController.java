@@ -1,8 +1,12 @@
 package com.example.osm.controllers;
 
+import com.example.osm.entity.Airplane;
+import com.example.osm.entity.AirplaneStatus;
+import com.example.osm.entity.DTO.AirplaneDTO;
 import com.example.osm.entity.DTO.FlightDTO;
 import com.example.osm.entity.Flight;
 import com.example.osm.exception.ResourceNotFound;
+import com.example.osm.service.AirplaneService;
 import com.example.osm.service.FlightService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,12 +21,18 @@ public class FlightsController {
     @Autowired
     private FlightService flightService;
 
+    @Autowired
+    private AirplaneService airplaneService;
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getFlight(@PathVariable Long id) {
         Optional<Flight> flight = flightService.findById(id);
-        FlightDTO flightDTO = new FlightDTO();
-        if (flight.isPresent()) flightDTO = flightService.convertToFlightDTO(flight.get());
 
+        if (flight.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        FlightDTO flightDTO = flightService.convertToFlightDTO(flight.get());
         return new ResponseEntity<>(flightDTO, HttpStatus.OK);
     }
 

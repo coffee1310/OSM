@@ -1,0 +1,1 @@
+{"uuid":"35579148-5038-44f9-bd81-6dc10f031404","name":"PUT /api/airplanes/{id} -> 400 Bad Request, когда не найден самолет для обновления","children":["6e65fafb-6cb1-479b-b8a8-0aed53b3a2a4"],"befores":[],"afters":[],"start":1750370794426,"stop":1750370794433}

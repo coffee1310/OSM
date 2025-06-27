@@ -31,6 +31,7 @@ public class AirplaneService {
         airplaneDTO.setId(airplane.getId());
         airplaneDTO.setModel(airplane.getModel());
         airplaneDTO.setNumber(airplane.getNumber());
+        airplaneDTO.setStatus(airplane.getStatus());
         airplaneDTO.validate();
 
         airplaneRepository.save(airplane);

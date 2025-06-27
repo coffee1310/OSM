@@ -49,6 +49,7 @@ public class FlightService {
             airplaneDTO.setId(flight.getAirplane().getId());
             airplaneDTO.setNumber(flight.getAirplane().getNumber());
             airplaneDTO.setModel(flight.getAirplane().getModel());
+            airplaneDTO.setStatus(flight.getAirplane().getStatus());
 
             flightDTO.setAirplane(airplaneDTO);
         }

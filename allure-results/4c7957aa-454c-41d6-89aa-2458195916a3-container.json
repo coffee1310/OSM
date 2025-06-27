@@ -1,0 +1,1 @@
+{"uuid":"4c7957aa-454c-41d6-89aa-2458195916a3","name":"DELETE /api/airplanes/{id} -> 400 Bad Request, когда самолет не найден","children":["4d7456cb-3f6b-4784-8a4c-4af15e24b219"],"befores":[],"afters":[],"start":1751059619806,"stop":1751059619817}

@@ -23,7 +23,6 @@ public class AirplaneDTO {
     @Size(min = 5, max = 7)
     private String number;
 
-    @NotBlank
     @NotNull
     AirplaneStatus status;
 

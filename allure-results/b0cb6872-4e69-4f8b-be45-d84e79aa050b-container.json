@@ -1,0 +1,1 @@
+{"uuid":"b0cb6872-4e69-4f8b-be45-d84e79aa050b","name":"PUT /api/airplanes/{id} -> 201 OK, когда самолет обновляется","children":["f80fe0f4-8bbc-46ec-965c-f094e0d485fd"],"befores":[],"afters":[],"start":1751060527974,"stop":1751060528001}

@@ -1,0 +1,1 @@
+{"uuid":"ebbe8a84-bd77-404c-b80f-58fd9e794299","name":"GET /api/airplanes/{id} -> 200 OK, когда самолет существует","children":["69249d40-efc8-4603-bba9-001c37a9c9b3"],"befores":[],"afters":[],"start":1751059857469,"stop":1751059857578}

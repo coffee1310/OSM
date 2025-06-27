@@ -1,0 +1,1 @@
+{"uuid":"7178c583-3054-4b1a-8391-bf77ca221a53","name":"POST /api/airplanes -> 400 Bad Request, когда самолет не проходит валидацию","children":["b3c7060f-6926-414a-bb57-ce2bf28feb44"],"befores":[],"afters":[],"start":1750368285552,"stop":1750368285639}
