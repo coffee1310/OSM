@@ -9,7 +9,7 @@ import lombok.Data;
 import java.util.Set;
 
 @Data
-public class UserDTO {
+public class UserDTO implements Validatable {
     private Long id;
 
     @Size(min = 5)
@@ -19,6 +19,7 @@ public class UserDTO {
     @Max(150)
     private short age;
 
+    @Override
     public void validate() {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();

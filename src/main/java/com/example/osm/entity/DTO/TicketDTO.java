@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.Set;
 
 @Data
-public class TicketDTO {
+public class TicketDTO implements Validatable {
     private Long id;
 
     @Valid
@@ -16,6 +16,7 @@ public class TicketDTO {
     @Valid
     private FlightDTO flight;
 
+    @Override
     public void validate() {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();

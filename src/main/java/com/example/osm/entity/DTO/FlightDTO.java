@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
-public class FlightDTO {
+public class FlightDTO implements Validatable {
     private Long id;
 
     @NotNull
@@ -28,6 +28,7 @@ public class FlightDTO {
     @Valid
     private AirplaneDTO airplane;
 
+    @Override
     public void validate() {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();

@@ -10,7 +10,7 @@ import lombok.Data;
 import java.util.Set;
 
 @Data
-public class AirplaneDTO {
+public class AirplaneDTO implements Validatable{
     private Long id;
 
     @NotNull
@@ -26,6 +26,7 @@ public class AirplaneDTO {
     @NotNull
     AirplaneStatus status;
 
+    @Override
     public void validate() {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();
