@@ -5,6 +5,9 @@ import com.example.osm.entity.DTO.AirplaneDTO;
 import com.example.osm.entity.DTO.FlightDTO;
 import com.example.osm.entity.Flight;
 import com.example.osm.repository.AirplaneRepository;
+import com.example.osm.service.converter.AirplanesConverter;
+import com.example.osm.service.converter.ConverterFactory;
+import com.example.osm.service.converter.EntityConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,28 +18,23 @@ import java.util.Set;
 @Service
 public class AirplaneService {
     @Autowired
-    AirplaneRepository airplaneRepository;
+    private AirplaneRepository airplaneRepository;
+
+    @Autowired
+    private ConverterFactory converterFactory;
 
     public Optional<Airplane> findById(Long id) {
         return airplaneRepository.findById(id);
     }
 
+    public Optional<AirplaneDTO> createAirplane(Airplane airplane) {
+        EntityConverter<Airplane, AirplaneDTO> converter = new ConverterFactory()
+                .getConverter(Airplane.class, AirplaneDTO.class);
 
-    public AirplaneDTO getById(Long id) {
-        return convertToAirplaneDTO(airplaneRepository.findById(id).get());
-    }
-
-    public AirplaneDTO createAirplane(Airplane airplane) {
-        AirplaneDTO airplaneDTO = new AirplaneDTO();
-        airplaneDTO.setId(airplane.getId());
-        airplaneDTO.setModel(airplane.getModel());
-        airplaneDTO.setNumber(airplane.getNumber());
-        airplaneDTO.setStatus(airplane.getStatus());
-        airplaneDTO.validate();
+        AirplaneDTO airplaneDTO = converter.toDTO(airplane);
 
         airplaneRepository.save(airplane);
-
-        return airplaneDTO;
+        return Optional.of(airplaneDTO);
     }
 
     public AirplaneDTO updateAirplane(Airplane airplane, Airplane airplaneDetails) {
@@ -44,14 +42,13 @@ public class AirplaneService {
         airplane.setStatus(airplaneDetails.getStatus());
         airplane.setNumber(airplaneDetails.getNumber());
 
-        airplaneRepository.save(airplane);
 
-        AirplaneDTO airplaneDTO = new AirplaneDTO();
-        airplaneDTO.setId(airplane.getId());
-        airplaneDTO.setModel(airplaneDetails.getModel());
-        airplaneDTO.setNumber(airplaneDetails.getNumber());
-        airplaneDTO.validate();
+        EntityConverter<Airplane, AirplaneDTO> converter = new ConverterFactory()
+                .getConverter(Airplane.class, AirplaneDTO.class);
 
+        AirplaneDTO airplaneDTO = converter.toDTO(airplaneDetails);
+
+        this.save(airplane);
         return airplaneDTO;
     }
 
@@ -61,16 +58,5 @@ public class AirplaneService {
 
     public void delete(Airplane airplane) {
         airplaneRepository.delete(airplane);
-    }
-
-    public AirplaneDTO convertToAirplaneDTO(Airplane airplane) {
-        AirplaneDTO airplaneDTO = new AirplaneDTO();
-        airplaneDTO.setId(airplane.getId());
-        airplaneDTO.setNumber(airplane.getNumber());
-        airplaneDTO.setModel(airplane.getModel());
-        airplaneDTO.setStatus(airplane.getStatus());
-        airplaneDTO.validate();
-
-        return airplaneDTO;
     }
 }

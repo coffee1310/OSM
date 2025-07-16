@@ -2,6 +2,7 @@ package com.example.osm.controllers;
 
 import com.example.osm.entity.Airplane;
 import com.example.osm.entity.AirplaneStatus;
+import com.example.osm.entity.DTO.AirplaneDTO;
 import com.example.osm.entity.DTO.FlightDTO;
 import com.example.osm.entity.Flight;
 import com.example.osm.service.AirplaneService;
@@ -124,5 +125,58 @@ class FlightsControllerTest {
                 .andExpect(jsonPath("$.endPlace").value("Tokyo"));
     }
 
+    @Test
+    @DisplayName("PUT /api/flights/{id} -> 200 OK, когда полет обновляется")
+    public void putAirplaneTest_thenStatus200AndAirplaneDTOReturned() throws Exception {
+        // Подготовка данных
+        Airplane airplaneDetails = new Airplane();
+        airplaneDetails.setId(1L);
+        airplaneDetails.setModel("Boeing 757");
+        airplaneDetails.setNumber("CBA123");
+        airplaneDetails.setStatus(AirplaneStatus.LANDED);
 
+        AirplaneDTO airplaneDTO = new AirplaneDTO();
+        airplaneDTO.setId(1L);
+        airplaneDTO.setModel("Boeing 757");
+        airplaneDTO.setNumber("CBA123");
+        airplaneDTO.setStatus(AirplaneStatus.LANDED);
+
+        // Фиксированные даты для теста
+        LocalDateTime startTime = LocalDateTime.of(2025, 7, 17, 10, 0);
+        LocalDateTime endTime = LocalDateTime.of(2025, 7, 17, 20, 0);
+
+        Flight requestFlight = new Flight();
+        requestFlight.setId(1L);
+        requestFlight.setAirplane(airplaneDetails);
+        requestFlight.setAirplaneId(1L);
+        requestFlight.setStartTime(startTime);
+        requestFlight.setEndTime(endTime);
+        requestFlight.setStartPlace("Moscow");
+        requestFlight.setEndPlace("Tokyo");
+
+        Flight flightDetails = new Flight();
+        flightDetails.setId(1L);
+        flightDetails.setAirplane(airplaneDetails);
+        flightDetails.setAirplaneId(1L);
+        flightDetails.setStartTime(startTime);
+        flightDetails.setEndTime(endTime);
+        flightDetails.setStartPlace("Tokyo");
+        flightDetails.setEndPlace("Moscow");
+
+        FlightDTO responseDTO = new FlightDTO();
+        responseDTO.setId(1L);
+        responseDTO.setAirplane(airplaneDTO);
+        responseDTO.setStartTime(startTime);
+        responseDTO.setEndTime(endTime);
+        responseDTO.setStartPlace("Tokyo");
+        responseDTO.setEndPlace("Moscow");
+
+        when(flightService.findById(requestFlight.getId())).thenReturn(Optional.of(requestFlight));
+        when(flightService.putFlight(any(Flight.class), any(Flight.class))).thenReturn(responseDTO);
+
+        mockMvc.perform(put("/api/flights/{id}", 1L)
+                        .content(objectMapper.writeValueAsString(flightDetails))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }

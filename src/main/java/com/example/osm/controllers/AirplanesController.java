@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -28,12 +29,11 @@ public class AirplanesController {
 
     @PostMapping
     public ResponseEntity<?> addPlane(@RequestBody Airplane plane) {
-        try {
-            AirplaneDTO new_plane = airplaneService.createAirplane(plane);
-            return new ResponseEntity<>(new_plane, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
-        }
+        Optional<AirplaneDTO> airplaneDTO = airplaneService.createAirplane(plane);
+        return airplaneDTO.map(dto -> ResponseEntity
+                        .created(URI.create("/api/airplanes/" + dto.getId()))
+                        .body(dto))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @PutMapping("/{id}")

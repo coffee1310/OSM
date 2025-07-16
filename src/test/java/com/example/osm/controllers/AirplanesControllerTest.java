@@ -65,7 +65,7 @@ class AirplanesControllerTest {
     public void getAirplaneTest_thenStatus404() throws Exception {
         Long nonExistId = 9999L;
 
-        when(airplaneService.getById(nonExistId)).thenReturn(null);
+        when(airplaneService.findById(nonExistId)).thenReturn(Optional.empty());
 
         mockMvc.perform(
                 get("/api/airplanes/{id}", nonExistId))
@@ -87,7 +87,7 @@ class AirplanesControllerTest {
         responseDTO.setStatus(AirplaneStatus.IN_SERVICE);
 
         when(airplaneService.createAirplane(any(Airplane.class)))
-                .thenReturn(responseDTO);
+                .thenReturn(Optional.of(responseDTO));
 
         mockMvc.perform(post("/api/airplanes")
                         .contentType(MediaType.APPLICATION_JSON)
