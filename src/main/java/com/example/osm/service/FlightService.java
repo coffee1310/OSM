@@ -1,12 +1,13 @@
 package com.example.osm.service;
 
 import com.example.osm.entity.Airplane;
-import com.example.osm.entity.DTO.AirplaneDTO;
 import com.example.osm.entity.DTO.FlightDTO;
 import com.example.osm.entity.Flight;
 import com.example.osm.exception.ResourceNotFound;
 import com.example.osm.repository.AirplaneRepository;
 import com.example.osm.repository.FlightRepository;
+import com.example.osm.service.DTOConverter.DTOConverterFactory;
+import com.example.osm.service.DTOConverter.EntityConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +17,21 @@ import java.util.Optional;
 public class FlightService {
     @Autowired
     private FlightRepository flightRepository;
+    private final DTOConverterFactory converterFactory;
 
     @Autowired
     private AirplaneRepository airplaneRepository;
 
+    @Autowired
+    public FlightService(FlightRepository flightRepository, DTOConverterFactory converterFactory,
+                         AirplaneRepository airplaneRepository) {
+        this.flightRepository = flightRepository;
+        this.converterFactory = converterFactory;
+        this.airplaneRepository = airplaneRepository;
+    }
+
     // Функция для добавления полета, добавляя автоматически самолет
-    public FlightDTO createFlight(Flight flight) throws ResourceNotFound{
+    public Optional<FlightDTO> createFlight(Flight flight) throws ResourceNotFound {
         Long planeId = flight.getAirplaneId();
         Airplane plane = airplaneRepository.findById(planeId)
                 .orElseThrow(() ->
@@ -29,47 +39,26 @@ public class FlightService {
 
         flight.setAirplane(plane);
         flightRepository.save(flight);
-        FlightDTO flightDTO = convertToFlightDTO(flight);
-        flightDTO.validate();
 
-        return flightDTO;
+        EntityConverter<Flight, FlightDTO> converter = converterFactory
+                .getConverter(Flight.class, FlightDTO.class);
+
+        FlightDTO flightDTO = converter.toDTO(flight);
+        return Optional.of(flightDTO);
     }
 
-    // Функция для конвертирования из Flight в FlightDTO для избежания рекурсии
-    public FlightDTO convertToFlightDTO(Flight flight) {
-        FlightDTO flightDTO = new FlightDTO();
-        flightDTO.setId(flight.getId());
-        flightDTO.setStartPlace(flight.getStartPlace());
-        flightDTO.setEndPlace(flight.getEndPlace());
-        flightDTO.setStartTime(flight.getStartTime());
-        flightDTO.setEndTime(flight.getEndTime());
-
-        if (flight.getAirplane() != null) {
-            AirplaneDTO airplaneDTO = new AirplaneDTO();
-            airplaneDTO.setId(flight.getAirplane().getId());
-            airplaneDTO.setNumber(flight.getAirplane().getNumber());
-            airplaneDTO.setModel(flight.getAirplane().getModel());
-            airplaneDTO.setStatus(flight.getAirplane().getStatus());
-
-            flightDTO.setAirplane(airplaneDTO);
-        }
-
-        flightDTO.validate();
-        return flightDTO;
-    }
-
-    public FlightDTO putFlight(Flight flight, Flight flightDetails) {
+    public Optional<FlightDTO> putFlight(Flight flight, Flight flightDetails) {
         flight.setStartPlace(flightDetails.getStartPlace());
         flight.setEndPlace(flightDetails.getEndPlace());
         flight.setStartTime(flightDetails.getStartTime());
         flight.setEndTime(flightDetails.getEndTime());
         flightRepository.save(flight);
 
-        FlightDTO flightDTO;
-        flightDTO = convertToFlightDTO(flight);
+        EntityConverter<Flight, FlightDTO> converter = converterFactory
+                .getConverter(Flight.class, FlightDTO.class);
 
-        flightDTO.validate();
-        return flightDTO;
+        FlightDTO flightDTO = converter.toDTO(flightDetails);
+        return Optional.of(flightDTO);
     }
 
     public Optional<Flight> findById(Long id) {

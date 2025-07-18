@@ -1,23 +1,19 @@
 package com.example.osm.configs;
 
-import com.example.osm.service.converter.ConverterFactory;
-import com.example.osm.service.converter.EntityConverter;
-import org.springframework.context.ApplicationContext;
+import com.example.osm.service.DTOConverter.DTOConverterFactory;
+import com.example.osm.service.DTOConverter.EntityConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ResolvableType;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Map;
 
 @Configuration
 public class ConverterConfig {
 
     @Bean
-    public ConverterFactory converterFactory(List<EntityConverter<?, ?>> converters) {
-        ConverterFactory factory = new ConverterFactory();
+    public DTOConverterFactory converterFactory(List<EntityConverter<?, ?>> converters) {
+        DTOConverterFactory factory = new DTOConverterFactory();
 
         converters.forEach(converter -> {
             ResolvableType resolvableType = ResolvableType.forInstance(converter)
@@ -36,7 +32,7 @@ public class ConverterConfig {
 
     @SuppressWarnings("unchecked")
     private <E, D> void registerConverter(
-            ConverterFactory factory,
+            DTOConverterFactory factory,
             Class<?> entityClass,
             Class<?> dtoClass,
             EntityConverter<?, ?> converter) {

@@ -68,7 +68,6 @@ class FlightsControllerTest {
         expectedDTO.setEndTime(flight.getEndTime());
 
         when(flightService.findById(requestId)).thenReturn(Optional.of(flight));
-        when(flightService.convertToFlightDTO(flight)).thenReturn(expectedDTO);
 
         mockMvc.perform(get("/api/flights/{id}", requestId))
                 .andDo(print())
@@ -113,7 +112,7 @@ class FlightsControllerTest {
         expectedDTO.setStartTime(flight.getStartTime());
         expectedDTO.setEndTime(flight.getEndTime());
 
-        when(flightService.createFlight(any(Flight.class))).thenReturn(expectedDTO);
+        when(flightService.createFlight(any(Flight.class))).thenReturn(Optional.of(expectedDTO));
 
         mockMvc.perform(post("/api/flights")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -172,7 +171,7 @@ class FlightsControllerTest {
         responseDTO.setEndPlace("Moscow");
 
         when(flightService.findById(requestFlight.getId())).thenReturn(Optional.of(requestFlight));
-        when(flightService.putFlight(any(Flight.class), any(Flight.class))).thenReturn(responseDTO);
+        when(flightService.putFlight(any(Flight.class), any(Flight.class))).thenReturn(Optional.of(responseDTO));
 
         mockMvc.perform(put("/api/flights/{id}", 1L)
                         .content(objectMapper.writeValueAsString(flightDetails))

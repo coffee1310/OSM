@@ -6,7 +6,6 @@ import com.example.osm.entity.DTO.AirplaneDTO;
 import com.example.osm.exception.ResourceNotFound;
 import com.example.osm.service.AirplaneService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

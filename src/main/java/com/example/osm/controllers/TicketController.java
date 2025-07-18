@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -20,48 +21,33 @@ public class TicketController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getTicket(@PathVariable Long id) {
         Optional<Ticket> ticket = ticketService.findById(id);
-        TicketDTO ticketDTO = ticketService.convertToTicketDTO(ticket.get());
-        return new ResponseEntity<>(ticketDTO, HttpStatus.OK);
+        return new ResponseEntity<>(ticket, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<?> addTicket(@RequestBody Ticket ticket) {
-        try {
-            try {
-                ticketService.createTicket(ticket);
-                return new ResponseEntity<>(ticketService.convertToTicketDTO(ticket), HttpStatus.CREATED);
-            } catch (ResourceNotFound e) {
-                return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-            }
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        Optional<TicketDTO> ticketDTO = ticketService.createTicket(ticket);
+        return ticketDTO.map(dto -> ResponseEntity
+                .created(URI.create("/api/tickets/" + dto.getId()))
+                .body(dto))
+            .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> putTicket(@PathVariable Long id, @RequestBody Ticket ticketDetails) {
-        try {
-            Ticket ticket = ticketService.findById(id)
-                    .orElseThrow(() ->
-                    new ResourceNotFound(String.format("Ticket with id: %d was not found", id)));
-            TicketDTO new_ticket = ticketService.updateTicket(ticket, ticketDetails);
-            return new ResponseEntity<>(new_ticket, HttpStatus.OK);
-        } catch (ResourceNotFound e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        Ticket ticket = ticketService.findById(id)
+                .orElseThrow(() ->
+                new ResourceNotFound(String.format("Ticket with id: %d was not found", id)));
+        Optional<TicketDTO> ticketDTO = ticketService.updateTicket(ticket, ticketDetails);
+        return ticketDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTicket(@PathVariable Long id) {
-        try {
-            Ticket ticket = ticketService.findById(id)
-                    .orElseThrow(() ->
-                    new ResourceNotFound(String.format("Ticket with id: %d was not found", id)));
-            ticketService.deleteTicket(ticket);
-            return new ResponseEntity<>("Ticket was deleted", HttpStatus.OK);
-        } catch (ResourceNotFound e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        Ticket ticket = ticketService.findById(id).orElseThrow(() ->
+                new ResourceNotFound(String.format("Ticket with id: %d was not found", id)));
+
+        ticketService.deleteTicket(ticket);
+        return new ResponseEntity<>("Ticket was deleted", HttpStatus.OK);
     }
 }
