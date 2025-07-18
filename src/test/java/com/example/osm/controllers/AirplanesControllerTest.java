@@ -6,6 +6,7 @@ import com.example.osm.entity.DTO.AirplaneDTO;
 import com.example.osm.exception.ResourceNotFound;
 import com.example.osm.service.AirplaneService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,13 +41,9 @@ class AirplanesControllerTest {
     @Test
     @DisplayName("GET /api/airplanes/{id} -> 200 OK, когда самолет существует")
     public void getAirPlaneTest_thenStatus200andAirplaneDTOReturned() throws Exception {
-        Airplane airplane = new Airplane();
-
         Long airplaneID = 1L;
-        airplane.setId(airplaneID);
-        airplane.setModel("Boeing 737");
-        airplane.setNumber("ABC123");
-        airplane.setStatus(AirplaneStatus.IN_SERVICE);
+
+        Airplane airplane = createAirplane(airplaneID);
 
         when(airplaneService.findById(airplaneID)).thenReturn(Optional.of(airplane));
 
@@ -74,16 +71,8 @@ class AirplanesControllerTest {
     @Test
     @DisplayName("POST /api/airplanes -> 201 Created, когда самолет добавлен")
     public void addAirplaneTest_thenStatus201AndAirplaneDTOReturned() throws Exception {
-        Airplane requestAirplane = new Airplane();
-        requestAirplane.setModel("Boeing 737");
-        requestAirplane.setNumber("ABC123");
-        requestAirplane.setStatus(AirplaneStatus.IN_SERVICE);
-
-        AirplaneDTO responseDTO = new AirplaneDTO();
-        responseDTO.setId(1L);
-        responseDTO.setModel("Boeing 737");
-        responseDTO.setNumber("ABC123");
-        responseDTO.setStatus(AirplaneStatus.IN_SERVICE);
+        Airplane requestAirplane = createAirplane(1L);
+        AirplaneDTO responseDTO = createAirplaneDTO(1L);
 
         when(airplaneService.createAirplane(any(Airplane.class)))
                 .thenReturn(Optional.of(responseDTO));
@@ -97,29 +86,15 @@ class AirplanesControllerTest {
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.model").value("Boeing 737"))
                 .andExpect(jsonPath("$.number").value("ABC123"))
-                .andExpect(jsonPath("$.status").value(AirplaneStatus.IN_SERVICE.toString()));
+                .andExpect(jsonPath("$.status").value(AirplaneStatus.LANDED.toString()));
     }
 
     @Test
     @DisplayName("PUT /api/airplanes/{id} -> 201 OK, когда самолет обновляется")
     public void putAirplaneTest_thenStatus201AndAirplaneDTOReturned() throws Exception{
-        Airplane requestAirplane = new Airplane();
-        requestAirplane.setId(1L);
-        requestAirplane.setModel("Boeing 737");
-        requestAirplane.setNumber("ABC123");
-        requestAirplane.setStatus(AirplaneStatus.IN_SERVICE);
-
-        Airplane airplaneDetails = new Airplane();
-        airplaneDetails.setId(1L);
-        airplaneDetails.setModel("Boeing 757");
-        airplaneDetails.setNumber("CBA123");
-        airplaneDetails.setStatus(AirplaneStatus.LANDED);
-
-        AirplaneDTO responseDTO = new AirplaneDTO();
-        responseDTO.setId(1L);
-        responseDTO.setModel("Boeing 757");
-        responseDTO.setNumber("CBA123");
-        responseDTO.setStatus(AirplaneStatus.LANDED);
+        Airplane requestAirplane = createAirplane(1L);
+        Airplane airplaneDetails = createAirplane(1L);
+        AirplaneDTO responseDTO = createAirplaneDTO(1L);
 
         when(airplaneService.findById(requestAirplane.getId())).thenReturn(Optional.of(requestAirplane));
         when(airplaneService.updateAirplane(requestAirplane, airplaneDetails)).thenReturn(responseDTO);
@@ -135,10 +110,7 @@ class AirplanesControllerTest {
     public void putAirplaneTest_thenStatus400AndResourceNotFound() throws Exception {
         Long invalidId = 9999L;
 
-        Airplane airplane = new Airplane();
-        airplane.setModel("Boeing 737");
-        airplane.setNumber("ABC123");
-        airplane.setStatus(AirplaneStatus.IN_SERVICE);
+        Airplane airplane = createAirplane(1L);
 
         when(airplaneService.findById(invalidId))
                 .thenThrow(new ResourceNotFound(String.format("Airplane with id: %d was not found", invalidId)));
@@ -154,11 +126,7 @@ class AirplanesControllerTest {
     public void deleteAirplaneTest_thenStatus201() throws Exception {
         Long airplaneId = 1L;
 
-        Airplane airplane = new Airplane();
-        airplane.setId(airplaneId);
-        airplane.setModel("Boeing 737");
-        airplane.setNumber("ABC123");
-        airplane.setStatus(AirplaneStatus.IN_SERVICE);
+        Airplane airplane = createAirplane(1L);
 
         when(airplaneService.findById(airplaneId)).thenReturn(Optional.of(airplane));
         doNothing().when(airplaneService).delete(airplane);
@@ -169,8 +137,8 @@ class AirplanesControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/airplanes/{id} -> 400 Bad Request, когда самолет не найден")
-    public void deleteAirplaneTest_thenStatus400AndResourceNotFound() throws Exception{
+    @DisplayName("DELETE /api/airplanes/{id} -> 404 Bad Request, когда самолет не найден")
+    public void deleteAirplaneTest_thenStatus404AndResourceNotFound() throws Exception{
         Long invalidId = 9999L;
 
         when(airplaneService.findById(invalidId))
@@ -180,5 +148,25 @@ class AirplanesControllerTest {
         mockMvc.perform(delete("/api/airplanes/{id}", invalidId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    public Airplane createAirplane(Long id) {
+        Airplane airplane = new Airplane();
+        airplane.setId(id);
+        airplane.setModel("Boeing 737");
+        airplane.setNumber("ABC123");
+        airplane.setStatus(AirplaneStatus.IN_SERVICE);
+
+        return airplane;
+    }
+
+    public AirplaneDTO createAirplaneDTO(Long id) {
+        AirplaneDTO airplaneDTO = new AirplaneDTO();
+        airplaneDTO.setId(1L);
+        airplaneDTO.setModel("Boeing 737");
+        airplaneDTO.setNumber("ABC123");
+        airplaneDTO.setStatus(AirplaneStatus.LANDED);
+
+        return airplaneDTO;
     }
 }
