@@ -39,9 +39,10 @@ public class AirplanesController {
     public ResponseEntity<?> putPlane(@PathVariable Long id, @RequestBody Airplane plane_details) throws ResourceNotFound {
         Airplane plane = airplaneService.findById(id)
                 .orElseThrow(() -> new ResourceNotFound(String.format("Airplane with id: %d was not found", id)));
-        AirplaneDTO airplaneDTO = airplaneService.updateAirplane(plane, plane_details);
+        Optional<AirplaneDTO> airplaneDTO = airplaneService.updateAirplane(plane, plane_details);
 
-        return new ResponseEntity<>(airplaneDTO, HttpStatus.OK);
+        return airplaneDTO.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @DeleteMapping("/{id}")

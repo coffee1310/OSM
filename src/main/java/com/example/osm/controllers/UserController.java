@@ -1,13 +1,16 @@
 package com.example.osm.controllers;
 
+import com.example.osm.entity.DTO.UserDTO;
 import com.example.osm.entity.User;
 import com.example.osm.exception.ResourceNotFound;
 import com.example.osm.repository.UserRepository;
+import com.example.osm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -15,6 +18,9 @@ import java.util.Optional;
 public class UserController {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(@PathVariable Long id) {
@@ -24,40 +30,29 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> addUser(@RequestBody User user) {
-        try {
-            user = userRepository.save(user);
-            return new ResponseEntity<>(user, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
-        }
+        Optional<UserDTO> userDTO = userService.createUser(user);
+        return userDTO.map(dto -> ResponseEntity
+                .created(URI.create("/api/users/" + dto.getId()))
+                .body(dto))
+            .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> putUser(@PathVariable Long id, @RequestBody User userDetails) {
-        try {
-            User user = userRepository.findById(id).orElseThrow(() ->
-                    new ResourceNotFound(String.format("User with id: %d was not found", id)));
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFound(String.format("User with id: %d was not found", id)));
 
-            user.setAge(userDetails.getAge());
-            user.setFullName(userDetails.getFullName());
-
-            userRepository.save(user);
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } catch (ResourceNotFound e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        Optional<UserDTO> userDTO = userService.updateUser(user, userDetails);
+        return userDTO.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        try {
-            User user = userRepository.findById(id).orElseThrow(() ->
-                    new ResourceNotFound(String.format("User with id: %d was not found", id)));
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFound(String.format("User with id: %d was not found", id)));
 
-            userRepository.delete(user);
-            return new ResponseEntity<>("User was deleted", HttpStatus.OK);
-        } catch (ResourceNotFound e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        userRepository.delete(user);
+        return new ResponseEntity<>("User was deleted", HttpStatus.OK);
     }
 }

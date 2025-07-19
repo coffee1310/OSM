@@ -23,7 +23,7 @@ public class UserConverter implements EntityConverter<User, UserDTO> {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(entity.getId());
         userDTO.setFullName(entity.getFullName());
-        userDTO.setAge(userDTO.getAge());
+        userDTO.setAge(entity.getAge());
 
         userDTO.validate();
         return userDTO;

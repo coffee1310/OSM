@@ -1,0 +1,1 @@
+{"uuid":"72356055-b2a7-4aba-b427-780f00314736","name":"DELETE /api/flights/{id} -> 200 OK, когда полет удаляется","children":["4d376898-3f5b-4d71-a5b9-557ef2eb768a"],"befores":[],"afters":[],"start":1752923995530,"stop":1752923995548}

@@ -6,7 +6,6 @@ import com.example.osm.entity.DTO.AirplaneDTO;
 import com.example.osm.exception.ResourceNotFound;
 import com.example.osm.service.AirplaneService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,11 +92,10 @@ class AirplanesControllerTest {
     @DisplayName("PUT /api/airplanes/{id} -> 201 OK, когда самолет обновляется")
     public void putAirplaneTest_thenStatus201AndAirplaneDTOReturned() throws Exception{
         Airplane requestAirplane = createAirplane(1L);
-        Airplane airplaneDetails = createAirplane(1L);
         AirplaneDTO responseDTO = createAirplaneDTO(1L);
 
         when(airplaneService.findById(requestAirplane.getId())).thenReturn(Optional.of(requestAirplane));
-        when(airplaneService.updateAirplane(requestAirplane, airplaneDetails)).thenReturn(responseDTO);
+        when(airplaneService.updateAirplane(any(Airplane.class), any(Airplane.class))).thenReturn(Optional.of(responseDTO));
 
         mockMvc.perform(put("/api/airplanes/{id}", 1L)
                 .content(objectMapper.writeValueAsString(responseDTO))

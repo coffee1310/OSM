@@ -38,7 +38,7 @@ public class AirplaneService {
         return Optional.of(airplaneDTO);
     }
 
-    public AirplaneDTO updateAirplane(Airplane airplane, Airplane airplaneDetails) {
+    public Optional<AirplaneDTO> updateAirplane(Airplane airplane, Airplane airplaneDetails) {
         airplane.setModel(airplaneDetails.getModel());
         airplane.setStatus(airplaneDetails.getStatus());
         airplane.setNumber(airplaneDetails.getNumber());
@@ -48,7 +48,7 @@ public class AirplaneService {
         AirplaneDTO airplaneDTO = converter.toDTO(airplaneDetails);
 
         airplaneRepository.save(airplane);
-        return airplaneDTO;
+        return Optional.of(airplaneDTO);
     }
 
     public void delete(Airplane airplane) {
